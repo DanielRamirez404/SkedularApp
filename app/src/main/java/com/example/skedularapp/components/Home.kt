@@ -1,5 +1,6 @@
 package com.example.skedularapp.components
 
+import android.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+
+@Composable
+fun HomeworkCardText(
+    text: String,
+    alpha: Float = 1f,
+    style: androidx.compose.ui.text.TextStyle
+) {
+    Text(
+        text = text,
+        color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = alpha),
+        fontWeight = FontWeight.ExtraBold,
+        style = style
+    )
+}
+
 @Composable
 fun HomeworkCard(
     title: String,
@@ -35,7 +51,7 @@ fun HomeworkCard(
             .padding(8.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
+            containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
         )
     ) {
         Row(
@@ -45,12 +61,12 @@ fun HomeworkCard(
         ) {
             Box(
                 modifier = Modifier
-                    .size(32.dp)
+                    .size(35.dp)
                     .background(color, CircleShape)
             )
             Column {
-                Text(text = title, fontWeight = FontWeight.ExtraBold, style = MaterialTheme.typography.titleMedium)
-                Text(text = "$subject • $dueTime", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f), fontWeight = FontWeight.ExtraBold, style = MaterialTheme.typography.bodySmall)
+                HomeworkCardText(text = title, alpha = 0.8f, style = MaterialTheme.typography.titleMedium)
+                HomeworkCardText(text = "$subject • $dueTime", alpha = 0.6f, style = MaterialTheme.typography.bodySmall)
             }
         }
     }
