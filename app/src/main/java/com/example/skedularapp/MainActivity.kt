@@ -15,7 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.skedularapp.components.HomeworkCard
+import com.example.skedularapp.components.SegmentedButtonWeek
 import com.example.skedularapp.ui.theme.SkedularAppTheme
+import java.util.Date
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,6 +39,7 @@ fun HomeworkList(modifier: Modifier = Modifier) {
         modifier = modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
+        SegmentedButtonWeek(date = java.sql.Date(Date().time))
         HomeworkCard(
             title = "Math Homework",
             subject = "Math",

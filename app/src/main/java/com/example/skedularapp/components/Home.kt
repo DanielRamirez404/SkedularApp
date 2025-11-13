@@ -19,14 +19,28 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.skedularapp.utilities.getDayOfDate
+import com.example.skedularapp.utilities.getMondayOfWeek
+import com.example.skedularapp.utilities.getNextWeek
+import com.example.skedularapp.utilities.isWeekend
+import com.example.skedularapp.utilities.getDayOfWeekNumber
+import com.example.skedularapp.utilities.getNthDayAfter
+import java.sql.Date
 
 
 @Composable
@@ -85,6 +99,35 @@ fun HomeworkCard(
                 imageVector = Icons.Filled.MoreVert,
                 contentDescription = "Settings",
                 tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+            )
+        }
+    }
+}
+
+@Composable
+fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date) {
+    val dayOfWeekNumber = getDayOfWeekNumber(date)
+    var selectedIndex by remember { mutableIntStateOf(dayOfWeekNumber - 1) }
+
+    val week = if (!isWeekend(date)) date else getNextWeek(date)
+    val monday = getMondayOfWeek(week)
+
+    val options = listOf("Lun", "Mar", "Mie", "Jue", "Vie")
+
+    SingleChoiceSegmentedButtonRow {
+        options.forEachIndexed { index, label ->
+
+            val optionDate = getNthDayAfter(monday, index)
+            val dayNumber = getDayOfDate(optionDate)
+
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = options.size
+                ),
+                onClick = { selectedIndex = index },
+                selected = index == selectedIndex,
+                label = { Text("$label $dayNumber") }
             )
         }
     }
