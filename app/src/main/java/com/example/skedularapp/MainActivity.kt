@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.skedularapp.components.Header
 import com.example.skedularapp.components.HomeworkCard
 import com.example.skedularapp.components.SegmentedButtonWeek
 import com.example.skedularapp.ui.theme.SkedularAppTheme
@@ -25,8 +28,16 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SkedularAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    HomeworkList(modifier = Modifier.padding(innerPadding))
+                Scaffold() { innerPadding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding)
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        Header()
+                        HomeworkList(modifier = Modifier.padding(top = 15.dp))
+                    }
                 }
             }
         }
@@ -51,6 +62,42 @@ fun HomeworkList(modifier: Modifier = Modifier) {
             subject = "History",
             dueTime = "14:15",
             color = Color(0xFF81C784)
+        )
+        HomeworkCard(
+            title = "Science Project",
+            subject = "Science",
+            dueTime = "16:00",
+            color = Color(0xFF64B5F6)
+        )
+        HomeworkCard(
+            title = "Science Project",
+            subject = "Science",
+            dueTime = "16:00",
+            color = Color(0xFF64B5F6)
+        )
+        HomeworkCard(
+            title = "Science Project",
+            subject = "Science",
+            dueTime = "16:00",
+            color = Color(0xFF64B5F6)
+        )
+        HomeworkCard(
+            title = "Science Project",
+            subject = "Science",
+            dueTime = "16:00",
+            color = Color(0xFF64B5F6)
+        )
+        HomeworkCard(
+            title = "Science Project",
+            subject = "Science",
+            dueTime = "16:00",
+            color = Color(0xFF64B5F6)
+        )
+        HomeworkCard(
+            title = "Science Project",
+            subject = "Science",
+            dueTime = "16:00",
+            color = Color(0xFF64B5F6)
         )
         HomeworkCard(
             title = "Science Project",

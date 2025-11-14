@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -35,10 +36,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Outline
+import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skedularapp.utilities.getDayOfDate
@@ -49,6 +60,65 @@ import com.example.skedularapp.utilities.getDayOfWeekNumber
 import com.example.skedularapp.utilities.getNthDayAfter
 import java.sql.Date
 
+
+class BottomRoundedShape(private val roundedLength: Dp) : Shape {
+    val highMultiplier = 5f
+    val lowMultiplier = 1.25f
+
+    override fun createOutline(
+        size: Size,
+        layoutDirection: LayoutDirection,
+        density: Density
+    ): Outline {
+        val roundedLengthPx = with(density) { roundedLength.toPx() }
+        val path = Path().apply {
+            reset()
+            moveTo(0f, 0f)
+            lineTo(size.width, 0f)
+            lineTo(size.width, size.height - roundedLengthPx)
+            arcTo(
+                rect = Rect(
+                    left = size.width - highMultiplier * roundedLengthPx,
+                    top = size.height - highMultiplier * roundedLengthPx,
+                    right = size.width + lowMultiplier * roundedLengthPx,
+                    bottom = size.height
+                ),
+                startAngleDegrees = 0f,
+                sweepAngleDegrees = 90f,
+                forceMoveTo = false
+            )
+            arcTo(
+                rect = Rect(
+                    left = -lowMultiplier * roundedLengthPx,
+                    top = size.height - highMultiplier * roundedLengthPx,
+                    right = highMultiplier * roundedLengthPx,
+                    bottom = size.height
+                ),
+                startAngleDegrees = 90f,
+                sweepAngleDegrees = 90f,
+                forceMoveTo = false
+            )
+            lineTo(0f, 0f)
+            close()
+        }
+        return Outline.Generic(path)
+    }
+}
+
+@Composable
+fun Header() {
+    val roundedLength = 80.dp
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(325.dp)
+            .background(
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                shape = BottomRoundedShape(roundedLength = roundedLength)
+            )
+    )
+}
 
 @Composable
 fun HomeworkCardText(
@@ -122,7 +192,7 @@ fun DateIcon(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date) {
+fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date, onClick: (Int) -> Unit = {}) {
     val dayOfWeekNumber = getDayOfWeekNumber(date)
     var selectedIndex by remember { mutableIntStateOf(dayOfWeekNumber - 1) }
 
@@ -131,7 +201,23 @@ fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date) {
 
     val options = listOf("Lun", "Mar", "Mie", "Jue", "Vie")
 
-    SingleChoiceSegmentedButtonRow(modifier = modifier) {
+    val outlineColor = MaterialTheme.colorScheme.outlineVariant
+
+    SingleChoiceSegmentedButtonRow(
+        modifier = modifier
+            .padding(bottom = 25.dp)
+            .drawBehind {
+                val strokeWidth = 1.dp.toPx()
+                val y = 1.5f * size.height
+                val x = 75f
+                drawLine(
+                    color = outlineColor,
+                    start = Offset(x, y),
+                    end = Offset(size.width - x, y),
+                    strokeWidth = strokeWidth
+                )
+            }
+    ) {
         options.forEachIndexed { index, label ->
 
             val optionDate = getNthDayAfter(monday, index)
@@ -142,12 +228,17 @@ fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date) {
             SegmentedButton(
                 modifier = modifier
                     .padding(horizontal = 5.dp)
-                    .height(33.dp),
+                    .height(33.dp)
+                    .width(70.dp),
 
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 shape = RoundedCornerShape(5.dp),
 
-                onClick = { selectedIndex = index },
+                onClick = {
+                    selectedIndex = index
+                    onClick(index + 1)
+                },
+
                 selected = selected,
                 icon = {
                     SegmentedButtonDefaults.Icon(
