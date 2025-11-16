@@ -1,7 +1,8 @@
 package com.example.skedularapp.components
 
-import android.R
+import com.example.skedularapp.R
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
@@ -24,6 +26,8 @@ import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -106,18 +110,105 @@ class BottomRoundedShape(private val roundedLength: Dp) : Shape {
 }
 
 @Composable
-fun Header() {
-    val roundedLength = 80.dp
-
+fun Header(username: String = "User", eventsNumber: Int = 0) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(325.dp)
             .background(
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                shape = BottomRoundedShape(roundedLength = roundedLength)
+                color = MaterialTheme.colorScheme.primary,
+                shape = BottomRoundedShape(roundedLength = 80.dp)
             )
-    )
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(top = 16.dp),
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    IconButton(
+                        modifier = Modifier.size(40.dp),
+                        onClick = {},
+                        colors = IconButtonDefaults.iconButtonColors(
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                        Icon(
+                            modifier = Modifier.size(30.dp),
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = "Settings",
+                            tint = MaterialTheme.colorScheme.onPrimary
+                        )
+                    }
+                    Text(
+                        text = "Welcome, $username!",
+                        fontSize = 28.sp,
+                        color = MaterialTheme.colorScheme.onPrimary,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+
+                IconButton(
+                    modifier = Modifier.size(40.dp),
+                    onClick = {},
+                    colors = IconButtonDefaults.iconButtonColors(
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    )
+                ) {
+                    Icon(
+                        modifier = Modifier.size(30.dp),
+                        imageVector = Icons.Filled.AddCircle,
+                        contentDescription = "Settings",
+                        tint = MaterialTheme.colorScheme.onPrimary
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 48.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+            ) {
+
+                val homeworkText = when (eventsNumber) {
+                    0 -> "No events\ndue!"
+                    1 -> "1 event\ndue"
+                    else -> "$eventsNumber events\ndue"
+                }
+
+                Text(
+                    text = homeworkText,
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+
+                Image(
+                    modifier = Modifier
+                        .padding(horizontal = 24.dp)
+                        .size(175.dp),
+                    painter = androidx.compose.ui.res.painterResource(id = R.drawable.spring_desktop_calendar_variant),
+                    contentDescription = "Calendar Image",
+                    colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
+                )
+            }
+        }
+    }
 }
 
 @Composable
