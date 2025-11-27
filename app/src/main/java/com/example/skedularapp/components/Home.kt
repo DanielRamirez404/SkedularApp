@@ -51,6 +51,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -110,7 +111,12 @@ class BottomRoundedShape(private val roundedLength: Dp) : Shape {
 }
 
 @Composable
-fun Header(username: String = "User", eventsNumber: Int = 0) {
+fun Header(
+    username: String = "User",
+    eventsNumber: Int = 0,
+    onSettingsClick: () -> Unit = {},
+    onAddEventClick: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -139,7 +145,7 @@ fun Header(username: String = "User", eventsNumber: Int = 0) {
                 ) {
                     IconButton(
                         modifier = Modifier.size(40.dp),
-                        onClick = {},
+                        onClick = onSettingsClick,
                         colors = IconButtonDefaults.iconButtonColors(
                             contentColor = MaterialTheme.colorScheme.onPrimary
                         )
@@ -161,7 +167,7 @@ fun Header(username: String = "User", eventsNumber: Int = 0) {
 
                 IconButton(
                     modifier = Modifier.size(40.dp),
-                    onClick = {},
+                    onClick = onAddEventClick,
                     colors = IconButtonDefaults.iconButtonColors(
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     )
@@ -225,14 +231,17 @@ fun HomeworkCardText(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeworkCard(
     title: String,
     subject: String,
     dueTime: String,
-    color: Color
+    color: Color,
+    onClick: () -> Unit = {}
 ) {
     Card(
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp),
@@ -262,12 +271,19 @@ fun HomeworkCard(
                     HomeworkCardText(text = "$subject • $dueTime", alpha = 0.6f, style = MaterialTheme.typography.bodySmall)
                 }
             }
-            Icon(
+            IconButton(
                 modifier = Modifier.padding(end = 16.dp),
-                imageVector = Icons.Filled.MoreVert,
-                contentDescription = "Settings",
-                tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
-            )
+                onClick = {},
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                )
+            ){
+                Icon(
+                    imageVector = Icons.Filled.MoreVert,
+                    contentDescription = "Settings",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.6f)
+                )
+            }
         }
     }
 }
