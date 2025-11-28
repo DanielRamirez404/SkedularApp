@@ -14,6 +14,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import com.example.skedularapp.utilities.LocalSettings
+import com.example.skedularapp.utilities.ThemePreference
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -265,7 +267,11 @@ fun SkedularAppTheme(
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            when (LocalSettings.value.themePreference) {
+                ThemePreference.LIGHT -> dynamicLightColorScheme(context)
+                ThemePreference.DARK -> dynamicDarkColorScheme(context)
+                ThemePreference.SYSTEM -> if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+            }
         }
 
         darkTheme -> darkScheme

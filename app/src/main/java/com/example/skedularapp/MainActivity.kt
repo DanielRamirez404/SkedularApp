@@ -11,6 +11,7 @@ import com.example.skedularapp.screens.HomeScreen
 import com.example.skedularapp.screens.OptionsScreen
 import com.example.skedularapp.screens.EventScreen
 import com.example.skedularapp.ui.theme.SkedularAppTheme
+import com.example.skedularapp.utilities.LocalSettings
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,7 +22,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "home") {
                     composable("home") {
-                        HomeScreen(navController = navController)
+                        HomeScreen(navController = navController, username = LocalSettings.value.username)
                     }
                     composable("options") {
                         OptionsScreen()

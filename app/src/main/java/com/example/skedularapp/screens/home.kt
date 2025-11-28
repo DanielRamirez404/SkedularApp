@@ -20,7 +20,7 @@ import com.example.skedularapp.ui.theme.SkedularAppTheme
 import java.util.Date
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, navController: NavController? = null) {
+fun HomeScreen(modifier: Modifier = Modifier, navController: NavController? = null, username: String = "user") {
     Scaffold {
  innerPadding ->
         Column(
@@ -30,6 +30,7 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController? = nu
                 .verticalScroll(rememberScrollState())
         ) {
             Header(
+                username = username,
                 onSettingsClick = {
                     navController?.navigate("options")
                 },
