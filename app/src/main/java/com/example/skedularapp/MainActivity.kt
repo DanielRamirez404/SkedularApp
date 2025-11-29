@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
                         HomeScreen(navController = navController, username = LocalSettings.value.username)
                     }
                     composable("options") {
-                        OptionsScreen()
+                        OptionsScreen(onBack = { navController.popBackStack() })
                     }
                     composable("event") {
                         EventScreen()
