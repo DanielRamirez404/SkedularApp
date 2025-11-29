@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import com.example.skedularapp.components.DropDown
 import com.example.skedularapp.components.FormScreen
 import com.example.skedularapp.components.FormTextField
+import com.example.skedularapp.components.MainButton
 import com.example.skedularapp.components.Title
 
 @Composable
@@ -38,6 +39,13 @@ fun OptionsScreen(onBack: () -> Unit) {
         PersonalInfoSection(
             username = username,
             onUsernameChange = { username = it }
+        )
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        MainButton(
+            text = "Save Settings",
+            onClick = {}
         )
     }
 }

@@ -20,6 +20,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -183,4 +185,27 @@ fun FormTextField(
             focusManager.clearFocus()
         })
     )
+}
+
+@Composable
+fun MainButton(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Button(
+        onClick = onClick,
+        modifier = modifier.fillMaxWidth().height(48.dp),
+        shape = RoundedCornerShape(8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = MaterialTheme.colorScheme.primary
+        )
+    ) {
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.onPrimary,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.Bold
+        )
+    }
 }
