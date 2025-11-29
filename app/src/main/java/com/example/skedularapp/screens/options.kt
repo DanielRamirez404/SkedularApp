@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.skedularapp.components.DropDown
 import com.example.skedularapp.components.FormScreen
+import com.example.skedularapp.components.FormTextField
 import com.example.skedularapp.components.Title
 
 @Composable
@@ -23,24 +24,29 @@ fun OptionsScreen(onBack: () -> Unit) {
         onBack = onBack
     ) {
         val options = listOf("Light", "Dark", "System")
-        var selectedOption by remember { mutableStateOf(options[0]) }
+        var selectedTheme by remember { mutableStateOf(options[0]) }
+        var username by remember { mutableStateOf("") }
 
         PreferencesSection(
             options = options,
-            selectedOption = selectedOption,
-            onChange = { selectedOption = it }
+            selectedTheme = selectedTheme,
+            onThemeChange = { selectedTheme = it }
         )
 
         Spacer(modifier = Modifier.height(24.dp))
-        Title("Personal Info")
+
+        PersonalInfoSection(
+            username = username,
+            onUsernameChange = { username = it }
+        )
     }
 }
 
 @Composable
 fun PreferencesSection(
     options: List<String>,
-    selectedOption: String,
-    onChange: (String) -> Unit = {}
+    selectedTheme: String,
+    onThemeChange: (String) -> Unit = {}
 ) {
     Title("UI Preferences")
     Spacer(modifier = Modifier.height(24.dp))
@@ -48,7 +54,21 @@ fun PreferencesSection(
         icon = Icons.Filled.Build,
         title = "Theme",
         options = options,
-        selectedOption = selectedOption,
-        onChange = onChange
+        selectedOption = selectedTheme,
+        onChange = onThemeChange
+    )
+}
+
+@Composable
+fun PersonalInfoSection(
+    username: String,
+    onUsernameChange: (String) -> Unit = {}
+) {
+    Title("Personal Info")
+    Spacer(modifier = Modifier.height(16.dp))
+    FormTextField(
+        label = "Username",
+        value = username,
+        onValueChange = onUsernameChange
     )
 }
