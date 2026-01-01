@@ -67,7 +67,6 @@ fun Title(text: String, modifier: Modifier = Modifier) {
 @Composable
 fun DropDown(
     title: String,
-    icon: ImageVector,
     options: List<String>,
     selectedOption: String,
     onChange: (String) -> Unit,
@@ -88,17 +87,10 @@ fun DropDown(
                 shape = shape
             )
             .clip(shape)
-            .height(40.dp),
+            .padding(start = 16.dp)
+            .height(50.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = title,
-            modifier = Modifier
-                .padding(start = 8.dp, end = 8.dp)
-                .height(40.dp),
-            tint = MaterialTheme.colorScheme.onBackground
-        )
         Text(
             text = title,
             style = MaterialTheme.typography.bodyLarge,
@@ -129,7 +121,7 @@ fun DropDown(
                 Text(
                     modifier = Modifier
                         .padding(start = 16.dp)
-                        .width(80.dp),
+                        .width(120.dp),
                     text = selectedOption,
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground

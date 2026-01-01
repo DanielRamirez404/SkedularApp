@@ -21,7 +21,7 @@ import com.example.skedularapp.components.Title
 @Composable
 fun OptionsScreen(onBack: () -> Unit) {
     FormScreen(
-        title = "Options",
+        title = "Settings",
         onBack = onBack
     ) {
         val options = listOf("Light", "Dark", "System")
@@ -59,7 +59,6 @@ fun PreferencesSection(
     Title("UI Preferences")
     Spacer(modifier = Modifier.height(24.dp))
     DropDown(
-        icon = Icons.Filled.Build,
         title = "Theme",
         options = options,
         selectedOption = selectedTheme,
