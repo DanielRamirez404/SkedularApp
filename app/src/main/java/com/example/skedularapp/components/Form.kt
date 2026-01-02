@@ -359,6 +359,31 @@ fun FormTextField(
 }
 
 @Composable
+fun DescriptionTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val lines = 3
+
+    OutlinedTextField(
+        value = value,
+        onValueChange = onValueChange,
+        shape = RoundedCornerShape(8.dp),
+        singleLine = false,
+        minLines = lines,
+        maxLines = lines,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
+            unfocusedContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
+            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.25f),
+            unfocusedBorderColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.25f)
+        ),
+        modifier = modifier.fillMaxWidth()
+    )
+}
+
+@Composable
 fun MainButton(
     text: String,
     onClick: () -> Unit,

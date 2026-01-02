@@ -14,18 +14,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.skedularapp.components.DateTimePicker
+import com.example.skedularapp.components.DescriptionTextField
 import com.example.skedularapp.components.DropDown
 import com.example.skedularapp.components.FormScreen
 import com.example.skedularapp.components.FormTextField
+import com.example.skedularapp.components.MainButton
 import com.example.skedularapp.components.Title
 import java.util.Date
 
 @Composable
-fun EventScreen() {
-
+fun EventScreen(
+    onBack: () -> Unit = {}
+) {
     FormScreen(
-        title = "Event"
-    ) {
+        title = "Event",
+        onBack = onBack
+     ) {
         var title by remember { mutableStateOf("") }
 
         val activities = listOf("Homework", "Exam", "Meeting", "Assignment", "Other")
@@ -36,6 +40,8 @@ fun EventScreen() {
 
         val now = Date()
         var date by remember { mutableStateOf(now.toString()) }
+
+        var description by remember { mutableStateOf("") }
 
         InfoSection(
             title = title,
@@ -53,6 +59,20 @@ fun EventScreen() {
         DueDateSection(
             value = date,
             onValueChange = { date = it }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        DescriptionSection(
+            description = description,
+            onDescriptionChange = { description = it }
+        )
+
+        Spacer(modifier = Modifier.height(28.dp))
+
+        MainButton(
+            text = "Save Event",
+            onClick = {}
         )
     }
 }
@@ -106,5 +126,18 @@ fun DueDateSection(
     DateTimePicker(
         value = value,
         onValueChange = onValueChange
+    )
+}
+
+@Composable
+fun DescriptionSection(
+    description: String,
+    onDescriptionChange: (String) -> Unit = {}
+) {
+    Title("Description")
+    Spacer(modifier = Modifier.height(16.dp))
+    DescriptionTextField(
+        value = description,
+        onValueChange = onDescriptionChange,
     )
 }

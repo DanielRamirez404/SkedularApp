@@ -28,7 +28,7 @@ class MainActivity : ComponentActivity() {
                         OptionsScreen(onBack = { navController.popBackStack() })
                     }
                     composable("event") {
-                        EventScreen()
+                        EventScreen(onBack = { navController.popBackStack() })
                     }
                 }
             }
