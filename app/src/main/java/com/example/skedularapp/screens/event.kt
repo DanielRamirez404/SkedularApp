@@ -13,10 +13,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.skedularapp.components.DateTimePicker
 import com.example.skedularapp.components.DropDown
 import com.example.skedularapp.components.FormScreen
 import com.example.skedularapp.components.FormTextField
 import com.example.skedularapp.components.Title
+import java.util.Date
 
 @Composable
 fun EventScreen() {
@@ -32,6 +34,9 @@ fun EventScreen() {
         val subjects = listOf("Math", "Science", "History", "English", "Other")
         var selectedSubject by remember { mutableStateOf(subjects[0]) }
 
+        val now = Date()
+        var date by remember { mutableStateOf(now.toString()) }
+
         InfoSection(
             title = title,
             onTitleChange = { title = it },
@@ -43,6 +48,12 @@ fun EventScreen() {
             onSubjectChange = { selectedSubject = it }
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+
+        DueDateSection(
+            value = date,
+            onValueChange = { date = it }
+        )
     }
 }
 
@@ -84,6 +95,16 @@ fun InfoSection(
 }
 
 @Composable
-fun DueDateSection() {
+fun DueDateSection(
+    value: String,
+    onValueChange: (String) -> Unit
+) {
+    Title("Due to")
 
+    Spacer(modifier = Modifier.height(16.dp))
+
+    DateTimePicker(
+        value = value,
+        onValueChange = onValueChange
+    )
 }
