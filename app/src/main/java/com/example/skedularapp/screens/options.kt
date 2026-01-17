@@ -17,16 +17,22 @@ import com.example.skedularapp.components.FormScreen
 import com.example.skedularapp.components.FormTextField
 import com.example.skedularapp.components.MainButton
 import com.example.skedularapp.components.Title
+import java.util.Locale
 
 @Composable
-fun OptionsScreen(onBack: () -> Unit) {
+fun OptionsScreen(
+    onBack: () -> Unit,
+    onDone: (String, String) -> Unit,
+    defaultUsername: String = "",
+    defaultTheme: String = ""
+) {
     FormScreen(
         title = "Settings",
-        onBack = onBack
+        onBack = onBack,
     ) {
         val options = listOf("Light", "Dark", "System")
-        var selectedTheme by remember { mutableStateOf(options[0]) }
-        var username by remember { mutableStateOf("") }
+        var selectedTheme by remember { mutableStateOf(defaultTheme.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }) }
+        var username by remember { mutableStateOf(defaultUsername) }
 
         PreferencesSection(
             options = options,
@@ -45,7 +51,7 @@ fun OptionsScreen(onBack: () -> Unit) {
 
         MainButton(
             text = "Save Settings",
-            onClick = {}
+            onClick = { onDone(username, selectedTheme) }
         )
     }
 }

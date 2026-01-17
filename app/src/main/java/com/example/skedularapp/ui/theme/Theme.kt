@@ -259,7 +259,7 @@ val unspecified_scheme = ColorFamily(
 
 @Composable
 fun SkedularAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean,
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
     content: @Composable() () -> Unit
@@ -267,11 +267,7 @@ fun SkedularAppTheme(
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
-            when (LocalSettings.value.themePreference) {
-                ThemePreference.LIGHT -> dynamicLightColorScheme(context)
-                ThemePreference.DARK -> dynamicDarkColorScheme(context)
-                ThemePreference.SYSTEM -> if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-            }
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
         darkTheme -> darkScheme

@@ -10,13 +10,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.skedularapp.components.Header
 import com.example.skedularapp.components.HomeworkCard
 import com.example.skedularapp.components.SegmentedButtonWeek
-import com.example.skedularapp.ui.theme.SkedularAppTheme
 import java.util.Date
 
 @Composable

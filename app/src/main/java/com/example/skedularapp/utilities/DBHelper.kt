@@ -86,7 +86,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(
         db.execSQL("""
             INSERT INTO ${Tables.SETTINGS} 
             (${SettingsColumns.ID}, ${SettingsColumns.USERNAME}, ${SettingsColumns.THEME}) 
-            VALUES(1, 'user', 'system');
+            VALUES(1, 'Daniel', 'system');
         """.trimIndent())
     }
 

@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 
 data class UserSettings(
     val themePreference: ThemePreference = ThemePreference.LIGHT,
-    val username: String = "Rasputía"
+    val username: String = "User"
 )
 
 enum class ThemePreference {
