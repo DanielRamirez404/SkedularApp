@@ -20,11 +20,15 @@ import com.example.skedularapp.components.FormScreen
 import com.example.skedularapp.components.FormTextField
 import com.example.skedularapp.components.MainButton
 import com.example.skedularapp.components.Title
+import com.example.skedularapp.utilities.parseDate
+import com.example.skedularapp.utilities.toString
 import java.util.Date
 
 @Composable
 fun EventScreen(
-    onBack: () -> Unit = {}
+    onBack: () -> Unit = {},
+    selectedEvent: Int? = null,
+    onSave: (String, String, String, Date, String) -> Unit = { _, _, _, _, _ -> }
 ) {
     FormScreen(
         title = "Event",
@@ -39,7 +43,7 @@ fun EventScreen(
         var selectedSubject by remember { mutableStateOf(subjects[0]) }
 
         val now = Date()
-        var date by remember { mutableStateOf(now.toString()) }
+        var date by remember { mutableStateOf(toString(now)) }
 
         var description by remember { mutableStateOf("") }
 
@@ -58,7 +62,9 @@ fun EventScreen(
 
         DueDateSection(
             value = date,
-            onValueChange = { date = it }
+            onValueChange = {
+                date = toString(parseDate(string = it, format = "text"))
+            }
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -72,7 +78,9 @@ fun EventScreen(
 
         MainButton(
             text = "Save Event",
-            onClick = {}
+            onClick = {
+                onSave(title, selectedActivity, selectedSubject, parseDate(date), description)
+            }
         )
     }
 }
@@ -104,6 +112,7 @@ fun InfoSection(
         selectedOption = selectedActivity,
         onChange = onActivityChange,
     )
+
     Spacer(modifier = Modifier.height(16.dp))
 
     DropDown(

@@ -34,6 +34,8 @@ class MainActivity : ComponentActivity() {
 
                 val username = remember { mutableStateOf<String>("User") }
 
+                val selectedEvent = remember { mutableStateOf<Int?>(null) }
+
                 fun onSettingsChanged(newUsername : String, newTheme : String) {
                     theme.value = when (newTheme.lowercase(Locale.getDefault())) {
                         "light" -> ThemePreference.LIGHT
@@ -85,7 +87,17 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable("event") {
-                        EventScreen(onBack = { navController.popBackStack() })
+                        val scope = rememberCoroutineScope()
+
+                        EventScreen(
+                            onBack = { navController.popBackStack() },
+                            selectedEvent = selectedEvent.value,
+                            onSave = fun (title, activity, subject, date, description) {
+                                scope.launch {
+                                    DatabaseManager.addEvent(title, activity, subject, date, description)
+                                }
+                            }
+                        )
                     }
                 }
             }
