@@ -35,14 +35,16 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     username: String = "user",
     onGoToEventScreen: (Int?) -> Unit,
-    onSettingsClick: () -> Unit = {}
+    onSettingsClick: () -> Unit = {},
 ) {
-    val date = remember { mutableStateOf(Date()) }
-    val events = remember { mutableStateOf(listOf<Event>()) }
+    val scope = rememberCoroutineScope()
 
+    val date = remember { mutableStateOf(Date()) }
+    val update_events_flag = remember { mutableStateOf(false) }
+    val events = remember { mutableStateOf(listOf<Event>()) }
     val error = remember { mutableStateOf("none") }
 
-    LaunchedEffect(date.value) {
+    LaunchedEffect(date.value, update_events_flag.value) {
         try {
             events.value = DatabaseManager.getEvents(date.value)
         } catch (e: Exception) {
@@ -72,7 +74,13 @@ fun HomeScreen(
                 onWeekdayClick = {
                     date.value = it
                 },
-                onGoToEventScreen = onGoToEventScreen
+                onGoToEventScreen = onGoToEventScreen,
+                onDelete = {
+                    scope.launch {
+                        DatabaseManager.deleteEvent(it)
+                        update_events_flag.value = !update_events_flag.value
+                    }
+                }
             )
         }
     }
@@ -84,7 +92,8 @@ fun HomeworkList(
     date: Date,
     onWeekdayClick: (Date) -> Unit = {},
     events: List<Event>,
-    onGoToEventScreen: (Int?) -> Unit
+    onGoToEventScreen: (Int?) -> Unit,
+    onDelete: (Int) -> Unit = {}
 ) {
     Column(
         modifier = modifier.padding(horizontal = 16.dp),
@@ -108,7 +117,8 @@ fun HomeworkList(
                 subject = it.subject,
                 dueTime = "$hours:$minutes",
                 color = Color(0xFF64B5F6),
-                onClick = { onGoToEventScreen(it.id) },
+                onEditClick = { onGoToEventScreen(it.id) },
+                onDeleteClick = { onDelete(it.id) }
             )
         }
     }

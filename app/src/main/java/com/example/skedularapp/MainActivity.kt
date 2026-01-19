@@ -33,7 +33,6 @@ class MainActivity : ComponentActivity() {
             SkedularAppTheme(darkTheme = theme.value == ThemePreference.DARK || (theme.value == ThemePreference.SYSTEM && isSystemInDarkTheme())) {
 
                 val username = remember { mutableStateOf<String>("User") }
-
                 val selectedEvent = remember { mutableStateOf<Int?>(null) }
 
                 fun onSettingsChanged(newUsername : String, newTheme : String) {
@@ -56,7 +55,6 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val navController = rememberNavController()
-
                 NavHost(navController = navController, startDestination = "home") {
 
                     composable("home") {
