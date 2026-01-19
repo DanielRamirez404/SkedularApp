@@ -18,6 +18,7 @@ data class Settings(
 )
 
 data class Event(
+    val id: Int,
     val title: String,
     val activity: String,
     val subject: String,
@@ -133,6 +134,8 @@ object DatabaseManager {
     suspend fun getEvent(id: Int): Event? = withContext(Dispatchers.IO) {
         val db = dbHelper.readableDatabase
 
+        val subjects = getAllSubjects()
+
         val cursor = db.query(
             "Event",
             arrayOf("title", "activity", "subject_id", "due_date", "reminder", "description"),
@@ -145,12 +148,12 @@ object DatabaseManager {
             return@withContext if (it.moveToFirst()) {
                 val title = it.getString(it.getColumnIndexOrThrow("title"))
                 val activity = it.getString(it.getColumnIndexOrThrow("activity"))
-                val subject = it.getString(it.getColumnIndexOrThrow("subject_id"))
+                val subject = subjects[it.getString(it.getColumnIndexOrThrow("subject_id")).toInt() - 1]
                 val date = it.getString(it.getColumnIndexOrThrow("due_date"))
                 val reminder = it.getString(it.getColumnIndexOrThrow("reminder"))
                 val description = it.getString(it.getColumnIndexOrThrow("description"))
 
-                Event(title, activity, subject, parseDate(date), parseDate(reminder), description)
+                Event(id, title, activity, subject, parseDate(date), parseDate(reminder), description)
             } else null
         }
     }
@@ -162,7 +165,7 @@ object DatabaseManager {
 
         val cursor = db.query(
             "Event",
-            arrayOf("title", "activity", "subject_id", "due_date", "reminder", "description"),
+            arrayOf("id", "title", "activity", "subject_id", "due_date", "reminder", "description"),
             "DATE(due_date) = ?",                                 // format yyyy-MM-dd
             arrayOf(toString(day, format = "date")),   // same format
             null, null, null
@@ -171,13 +174,14 @@ object DatabaseManager {
         cursor.use {
             val events = mutableListOf<Event>()
             while (it.moveToNext()) {
+                val id = it.getInt(it.getColumnIndexOrThrow("id"))
                 val title = it.getString(it.getColumnIndexOrThrow("title"))
                 val activity = it.getString(it.getColumnIndexOrThrow("activity"))
                 val subject = subjects[it.getString(it.getColumnIndexOrThrow("subject_id")).toInt() - 1]
                 val date = it.getString(it.getColumnIndexOrThrow("due_date"))
                 val reminder = it.getString(it.getColumnIndexOrThrow("reminder"))
                 val description = it.getString(it.getColumnIndexOrThrow("description"))
-                events.add(Event(title, activity, subject, parseDate(date), parseDate(reminder), description))
+                events.add(Event(id, title, activity, subject, parseDate(date), parseDate(reminder), description))
             }
 
             events

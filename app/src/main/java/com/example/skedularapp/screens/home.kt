@@ -31,7 +31,12 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier, navController: NavController? = null, username: String = "user") {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    username: String = "user",
+    onGoToEventScreen: (Int?) -> Unit,
+    onSettingsClick: () -> Unit = {}
+) {
     val date = remember { mutableStateOf(Date()) }
     val events = remember { mutableStateOf(listOf<Event>()) }
 
@@ -55,22 +60,19 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController? = nu
         ) {
             Header(
                 username = username,
-                onSettingsClick = {
-                    navController?.navigate("options")
-                },
-                onAddEventClick = {
-                    navController?.navigate("event")
-                },
+                onSettingsClick = onSettingsClick,
+                onAddEventClick = { onGoToEventScreen(null) },
                 eventsNumber = events.value.size
             )
+
             HomeworkList(
                 modifier = Modifier.padding(top = 15.dp),
-                navController = navController,
                 date = date.value,
                 events = events.value,
                 onWeekdayClick = {
                     date.value = it
-                }
+                },
+                onGoToEventScreen = onGoToEventScreen
             )
         }
     }
@@ -79,10 +81,10 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController? = nu
 @Composable
 fun HomeworkList(
     modifier: Modifier = Modifier,
-    navController: NavController? = null,
     date: Date,
     onWeekdayClick: (Date) -> Unit = {},
-    events: List<Event>
+    events: List<Event>,
+    onGoToEventScreen: (Int?) -> Unit
 ) {
     Column(
         modifier = modifier.padding(horizontal = 16.dp),
@@ -106,9 +108,7 @@ fun HomeworkList(
                 subject = it.subject,
                 dueTime = "$hours:$minutes",
                 color = Color(0xFF64B5F6),
-                onClick = {
-                    navController?.navigate("event")
-                },
+                onClick = { onGoToEventScreen(it.id) },
             )
         }
     }

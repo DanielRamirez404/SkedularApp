@@ -22,6 +22,8 @@ import com.example.skedularapp.components.MainButton
 import com.example.skedularapp.components.Title
 import com.example.skedularapp.utilities.parseDate
 import com.example.skedularapp.utilities.toString
+import androidx.compose.runtime.LaunchedEffect
+import com.example.skedularapp.utilities.DatabaseManager
 import java.util.Date
 
 @Composable
@@ -46,6 +48,19 @@ fun EventScreen(
         var date by remember { mutableStateOf(toString(now)) }
 
         var description by remember { mutableStateOf("") }
+
+        LaunchedEffect(selectedEvent) {
+            if (selectedEvent == null)
+                return@LaunchedEffect
+
+            val event = DatabaseManager.getEvent(selectedEvent) ?: return@LaunchedEffect
+
+            title = event.title
+            selectedActivity = event.activity
+            selectedSubject = event.subject
+            date = toString(event.date)
+            description = event.description
+        }
 
         InfoSection(
             title = title,

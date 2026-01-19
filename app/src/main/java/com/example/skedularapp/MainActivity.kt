@@ -56,10 +56,20 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val navController = rememberNavController()
+
                 NavHost(navController = navController, startDestination = "home") {
 
                     composable("home") {
-                        HomeScreen(navController = navController, username = username.value)
+                        HomeScreen(
+                            username = username.value,
+                            onGoToEventScreen = fun (id: Int?) {
+                                selectedEvent.value = id
+                                navController.navigate("event")
+                            },
+                            onSettingsClick = {
+                                navController.navigate("options")
+                            }
+                        )
                     }
 
                     composable("options") {
