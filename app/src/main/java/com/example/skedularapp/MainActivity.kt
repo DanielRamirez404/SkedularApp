@@ -105,7 +105,10 @@ class MainActivity : ComponentActivity() {
                             selectedEvent = selectedEvent.value,
                             onSave = fun (title, activity, subject, date, description) {
                                 scope.launch {
-                                    DatabaseManager.addEvent(title, activity, subject, date, description)
+                                    if (selectedEvent.value != null)
+                                        DatabaseManager.updateEvent(selectedEvent.value!!, title, activity, subject, date, date, description)
+                                    else
+                                        DatabaseManager.addEvent(title, activity, subject, date, description)
                                 }
                             }
                         )

@@ -86,7 +86,7 @@ fun parseDate(string: String, format: String = "numeric"): Date {
 
         calendar.set(Calendar.YEAR, string.substring(8, 12).toInt())
         calendar.set(Calendar.MONTH, month)
-        calendar.set(Calendar.DAY_OF_MONTH, string.substring(4, 6).toInt())
+        calendar.set(Calendar.DAY_OF_MONTH, string.substring(4, 6).toInt() + 1)
         calendar.set(Calendar.HOUR_OF_DAY, if (isAfterMidday) baseHour + 12 else baseHour)
         calendar.set(Calendar.MINUTE, string.substring(16, 18).toInt())
         calendar.set(Calendar.SECOND, 0)
