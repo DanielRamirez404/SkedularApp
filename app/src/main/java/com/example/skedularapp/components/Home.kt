@@ -4,6 +4,7 @@ import com.example.skedularapp.R
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -25,6 +27,8 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.materialIcon
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -35,6 +39,8 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,18 +61,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.skedularapp.screens.OptionsScreen
+import com.example.skedularapp.utilities.areSameDay
 import com.example.skedularapp.utilities.getDayOfDate
 import com.example.skedularapp.utilities.getMondayOfWeek
 import com.example.skedularapp.utilities.getNextWeek
 import com.example.skedularapp.utilities.isWeekend
 import com.example.skedularapp.utilities.getDayOfWeekNumber
+import com.example.skedularapp.utilities.getNextDay
 import com.example.skedularapp.utilities.getNthDayAfter
+import com.example.skedularapp.utilities.toJavaDate
 import com.example.skedularapp.utilities.toSQLDate
 import java.sql.Date
 
@@ -323,18 +333,50 @@ fun DateIcon(modifier: Modifier = Modifier) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date, onClick: (Date) -> Unit = {}) {
     val dayOfWeekNumber = getDayOfWeekNumber(date)
-    var selectedIndex by remember { mutableIntStateOf(dayOfWeekNumber - 1) }
+    val selectedIndex = remember { mutableIntStateOf(dayOfWeekNumber - 1) }
 
     val monday = getMondayOfWeek(date)
     val weekdays = listOf("Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom")
 
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
+    val scrollState = rememberScrollState()
+
+    var showDatePicker by remember { mutableStateOf(false) }
+
+    if (showDatePicker) {
+        val datePickerState = rememberDatePickerState()
+        DatePickerDialog(
+            onDismissRequest = { showDatePicker = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    datePickerState.selectedDateMillis?.let {
+                        val selectedDate = toSQLDate(Date(it))
+                        selectedIndex.value = getDayOfWeekNumber(toJavaDate(selectedDate))
+                        val nextDay = getNextDay(selectedDate)
+                        onClick(toSQLDate(nextDay))
+                    }
+                    showDatePicker = false
+                }) {
+                    Text("OK")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDatePicker = false }) {
+                    Text("Cancel")
+                }
+            }
+        ) {
+            DatePicker(state = datePickerState)
+        }
+    }
 
     SingleChoiceSegmentedButtonRow(
         modifier = modifier
+            .horizontalScroll(scrollState)
             .padding(bottom = 25.dp)
             .drawBehind {
                 val strokeWidth = 1.dp.toPx()
@@ -353,19 +395,19 @@ fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date, onClick: (Dat
             val optionDate = getNthDayAfter(monday, index)
             val dayNumber = getDayOfDate(optionDate)
 
-            val selected = index == selectedIndex
+            val selected = index == selectedIndex.value
 
             SegmentedButton(
                 modifier = modifier
                     .padding(horizontal = 5.dp)
                     .height(33.dp)
-                    .width(70.dp),
+                    .width(75.dp),
 
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
                 shape = RoundedCornerShape(5.dp),
 
                 onClick = {
-                    selectedIndex = index
+                    selectedIndex.value = index
                     onClick(toSQLDate(optionDate))
                 },
 
@@ -392,5 +434,12 @@ fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date, onClick: (Dat
                 )
             )
         }
+
+        IconButton(onClick = {
+            showDatePicker = true
+        }) {
+            DateIcon()
+        }
+
     }
 }

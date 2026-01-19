@@ -18,6 +18,22 @@ fun getNextWeek(date: Date): Date {
     return calendar.time
 }
 
+fun getNextDay(date: Date): Date {
+    val calendar = Calendar.getInstance()
+    calendar.time = date
+    calendar.add(Calendar.DAY_OF_YEAR, 1)
+    return calendar.time
+}
+
+fun areSameDay(firstDate: Date, secondDate: Date): Boolean {
+    val calendar = Calendar.getInstance()
+    calendar.time = firstDate
+
+    val secondCalendar = Calendar.getInstance()
+    secondCalendar.time = secondDate
+    return calendar.get(Calendar.DAY_OF_YEAR) == secondCalendar.get(Calendar.DAY_OF_YEAR)
+}
+
 fun isWeekend(date: Date): Boolean {
     val calendar = Calendar.getInstance()
     calendar.time = date
@@ -31,6 +47,8 @@ fun getDayOfWeekNumber(date: Date): Int {
     val dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK)
     return if (dayOfWeek == Calendar.SUNDAY) {
         7
+    } else if (dayOfWeek == Calendar.MONDAY) {
+        1
     } else {
         dayOfWeek - 1
     }
