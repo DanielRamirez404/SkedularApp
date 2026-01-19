@@ -7,7 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -15,10 +20,31 @@ import androidx.navigation.NavController
 import com.example.skedularapp.components.Header
 import com.example.skedularapp.components.HomeworkCard
 import com.example.skedularapp.components.SegmentedButtonWeek
+import com.example.skedularapp.utilities.DatabaseManager
+import com.example.skedularapp.utilities.Event
+import com.example.skedularapp.utilities.toJavaDate
+import com.example.skedularapp.utilities.toSQLDate
+import com.example.skedularapp.utilities.toString
+import kotlinx.coroutines.launch
 import java.util.Date
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier, navController: NavController? = null, username: String = "user") {
+    val date = remember { mutableStateOf(Date()) }
+    val events = remember { mutableStateOf(listOf<Event>()) }
+
+    val error = remember { mutableStateOf("none") }
+
+    LaunchedEffect(date.value) {
+        try {
+            events.value = DatabaseManager.getEvents(date.value)
+        } catch (e: Exception) {
+            error.value = e.message ?: "Unknown error"
+        }
+    }
+
     Scaffold {
  innerPadding ->
         Column(
@@ -34,100 +60,56 @@ fun HomeScreen(modifier: Modifier = Modifier, navController: NavController? = nu
                 },
                 onAddEventClick = {
                     navController?.navigate("event")
+                },
+                eventsNumber = events.value.size
+            )
+            HomeworkList(
+                modifier = Modifier.padding(top = 15.dp),
+                navController = navController,
+                date = date.value,
+                events = events.value,
+                onWeekdayClick = {
+                    date.value = it
                 }
             )
-            HomeworkList(modifier = Modifier.padding(top = 15.dp), navController = navController)
         }
     }
 }
 
 @Composable
-fun HomeworkList(modifier: Modifier = Modifier, navController: NavController? = null) {
+fun HomeworkList(
+    modifier: Modifier = Modifier,
+    navController: NavController? = null,
+    date: Date,
+    onWeekdayClick: (Date) -> Unit = {},
+    events: List<Event>
+) {
     Column(
         modifier = modifier.padding(horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        SegmentedButtonWeek(date = java.sql.Date(Date().time))
-        HomeworkCard(
-            title = "Math Homework",
-            subject = "Math",
-            dueTime = "12:45",
-            color = Color(0xFFE57373),
-            onClick = {
-                navController?.navigate("event")
-            }
+        SegmentedButtonWeek(
+            date = toSQLDate(date),
+            onClick = onWeekdayClick
         )
-        HomeworkCard(
-            title = "History Reading",
-            subject = "History",
-            dueTime = "14:15",
-            color = Color(0xFF81C784),
-            onClick = {
-                navController?.navigate("event")
-            }
-        )
-        HomeworkCard(
-            title = "Science Project",
-            subject = "Science",
-            dueTime = "16:00",
-            color = Color(0xFF64B5F6),
-            onClick = {
-                navController?.navigate("event")
-            }
-        )
-        HomeworkCard(
-            title = "Science Project",
-            subject = "Science",
-            dueTime = "16:00",
-            color = Color(0xFF64B5F6),
-            onClick = {
-                navController?.navigate("event")
-            }
-        )
-        HomeworkCard(
-            title = "Science Project",
-            subject = "Science",
-            dueTime = "16:00",
-            color = Color(0xFF64B5F6),
-            onClick = {
-                navController?.navigate("event")
-            }
-        )
-        HomeworkCard(
-            title = "Science Project",
-            subject = "Science",
-            dueTime = "16:00",
-            color = Color(0xFF64B5F6),
-            onClick = {
-                navController?.navigate("event")
-            }
-        )
-        HomeworkCard(
-            title = "Science Project",
-            subject = "Science",
-            dueTime = "16:00",
-            color = Color(0xFF64B5F6),
-            onClick = {
-                navController?.navigate("event")
-            }
-        )
-        HomeworkCard(
-            title = "Science Project",
-            subject = "Science",
-            dueTime = "16:00",
-            color = Color(0xFF64B5F6),
-            onClick = {
-                navController?.navigate("event")
-            }
-        )
-        HomeworkCard(
-            title = "Science Project",
-            subject = "Science",
-            dueTime = "16:00",
-            color = Color(0xFF64B5F6),
-            onClick = {
-                navController?.navigate("event")
-            }
-        )
+
+        events.map {
+            val date = it.date
+
+            val string_date = toString(date) // format: yyyy-MM-dd hh:mm:ss
+
+            val hours = string_date.substring(11, 13)
+            val minutes = string_date.substring(14, 16)
+
+            HomeworkCard(
+                title = it.title,
+                subject = it.subject,
+                dueTime = "$hours:$minutes",
+                color = Color(0xFF64B5F6),
+                onClick = {
+                    navController?.navigate("event")
+                },
+            )
+        }
     }
 }

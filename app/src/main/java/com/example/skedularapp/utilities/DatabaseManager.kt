@@ -7,7 +7,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 import com.example.skedularapp.utilities.DBHelper
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 
 data class Settings(
@@ -54,7 +56,6 @@ object DatabaseManager {
 
             } else null
         }
-
     }
 
     suspend fun updateSettings(username: String, theme: String) = withContext(Dispatchers.IO) {
@@ -68,14 +69,37 @@ object DatabaseManager {
         db.update("Settings", values, "id = ?", arrayOf("1"))
     }
 
+    suspend fun getAllSubjects(): List<String> = withContext(Dispatchers.IO) {
+        val db = dbHelper.readableDatabase
+
+        val cursor = db.query(
+            "Subject",
+            arrayOf("name"),
+            null, null, null, null, null
+        )
+
+        cursor.use {
+            val subjects = mutableListOf<String>()
+
+            while (it.moveToNext()) {
+                val name = it.getString(it.getColumnIndexOrThrow("name"))
+                subjects.add(name)
+            }
+
+            subjects
+        }
+    }
+
     suspend fun addEvent(title: String, activity: String, subject: String, date: Date, description: String) {
         val db = dbHelper.writableDatabase
+
+        val subjectId = getAllSubjects().indexOf(subject) + 1
 
         val values = ContentValues().apply {
             put("title", title)
             put("activity", activity)
-            put("subject", subject)
-            put("date", toString(date))
+            put("subject_id", subjectId)
+            put("due_date", toString(date))
             put("reminder", toString(date))
             put("description", description)
         }
@@ -92,11 +116,13 @@ object DatabaseManager {
     suspend fun updateEvent(id: Int, title: String, activity: String, subject: String, date: Date, reminder: Date, description: String) {
         val db = dbHelper.writableDatabase
 
+        val subjectId = getAllSubjects().indexOf(subject) + 1
+
         val values = ContentValues().apply {
             put("title", title)
             put("activity", activity)
-            put("subject", subject)
-            put("date", toString(date))
+            put("subject_id", subjectId)
+            put("due_date", toString(date))
             put("reminder", toString(date))
             put("description", description)
         }
@@ -109,7 +135,7 @@ object DatabaseManager {
 
         val cursor = db.query(
             "Event",
-            arrayOf("title", "activity", "subject", "date", "reminder", "description"),
+            arrayOf("title", "activity", "subject_id", "due_date", "reminder", "description"),
             "id = ?",
             arrayOf(id.toString()),
             null, null, null
@@ -119,8 +145,8 @@ object DatabaseManager {
             return@withContext if (it.moveToFirst()) {
                 val title = it.getString(it.getColumnIndexOrThrow("title"))
                 val activity = it.getString(it.getColumnIndexOrThrow("activity"))
-                val subject = it.getString(it.getColumnIndexOrThrow("subject"))
-                val date = it.getString(it.getColumnIndexOrThrow("date"))
+                val subject = it.getString(it.getColumnIndexOrThrow("subject_id"))
+                val date = it.getString(it.getColumnIndexOrThrow("due_date"))
                 val reminder = it.getString(it.getColumnIndexOrThrow("reminder"))
                 val description = it.getString(it.getColumnIndexOrThrow("description"))
 
@@ -128,5 +154,33 @@ object DatabaseManager {
             } else null
         }
     }
-}
 
+    suspend fun getEvents(day: Date): List<Event> = withContext(Dispatchers.IO) {
+        val db = dbHelper.readableDatabase
+
+        val subjects = getAllSubjects()
+
+        val cursor = db.query(
+            "Event",
+            arrayOf("title", "activity", "subject_id", "due_date", "reminder", "description"),
+            "DATE(due_date) = ?",                                 // format yyyy-MM-dd
+            arrayOf(toString(day, format = "date")),   // same format
+            null, null, null
+        )
+
+        cursor.use {
+            val events = mutableListOf<Event>()
+            while (it.moveToNext()) {
+                val title = it.getString(it.getColumnIndexOrThrow("title"))
+                val activity = it.getString(it.getColumnIndexOrThrow("activity"))
+                val subject = subjects[it.getString(it.getColumnIndexOrThrow("subject_id")).toInt() - 1]
+                val date = it.getString(it.getColumnIndexOrThrow("due_date"))
+                val reminder = it.getString(it.getColumnIndexOrThrow("reminder"))
+                val description = it.getString(it.getColumnIndexOrThrow("description"))
+                events.add(Event(title, activity, subject, parseDate(date), parseDate(reminder), description))
+            }
+
+            events
+        }
+    }
+}

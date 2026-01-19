@@ -57,12 +57,14 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.skedularapp.screens.OptionsScreen
 import com.example.skedularapp.utilities.getDayOfDate
 import com.example.skedularapp.utilities.getMondayOfWeek
 import com.example.skedularapp.utilities.getNextWeek
 import com.example.skedularapp.utilities.isWeekend
 import com.example.skedularapp.utilities.getDayOfWeekNumber
 import com.example.skedularapp.utilities.getNthDayAfter
+import com.example.skedularapp.utilities.toSQLDate
 import java.sql.Date
 
 
@@ -299,14 +301,12 @@ fun DateIcon(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date, onClick: (Int) -> Unit = {}) {
+fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date, onClick: (Date) -> Unit = {}) {
     val dayOfWeekNumber = getDayOfWeekNumber(date)
     var selectedIndex by remember { mutableIntStateOf(dayOfWeekNumber - 1) }
 
-    val week = if (!isWeekend(date)) date else getNextWeek(date)
-    val monday = getMondayOfWeek(week)
-
-    val options = listOf("Lun", "Mar", "Mie", "Jue", "Vie")
+    val monday = getMondayOfWeek(date)
+    val weekdays = listOf("Lun", "Mar", "Mie", "Jue", "Vie", "Sab", "Dom")
 
     val outlineColor = MaterialTheme.colorScheme.outlineVariant
 
@@ -325,7 +325,7 @@ fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date, onClick: (Int
                 )
             }
     ) {
-        options.forEachIndexed { index, label ->
+        weekdays.forEachIndexed { index, label ->
 
             val optionDate = getNthDayAfter(monday, index)
             val dayNumber = getDayOfDate(optionDate)
@@ -343,7 +343,7 @@ fun SegmentedButtonWeek(modifier: Modifier = Modifier, date: Date, onClick: (Int
 
                 onClick = {
                     selectedIndex = index
-                    onClick(index + 1)
+                    onClick(toSQLDate(optionDate))
                 },
 
                 selected = selected,

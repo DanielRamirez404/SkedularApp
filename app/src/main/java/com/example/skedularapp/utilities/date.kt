@@ -95,7 +95,12 @@ fun parseDate(string: String, format: String = "numeric"): Date {
     return calendar.time
 }
 
-fun toString(date: Date): String {
+fun toString(date: Date, format: String = "numeric"): String {
+
+    if (format == "date") {
+        return toString(date).take(10) // format: yyyy-MM-dd
+    }
+
     val calendar = Calendar.getInstance()
     calendar.time = date
     val year = addTrailingZeros(calendar.get(Calendar.YEAR), 4)
@@ -105,4 +110,12 @@ fun toString(date: Date): String {
     val minute = addTrailingZeros(calendar.get(Calendar.MINUTE), 2)
     val second = addTrailingZeros(calendar.get(Calendar.SECOND), 2)
     return "$year-$month-$day $hour:$minute:$second"
+}
+
+fun toSQLDate(date: Date): java.sql.Date {
+    return java.sql.Date(date.time)
+}
+
+fun toJavaDate(date: java.sql.Date): Date {
+    return Date(date.time)
 }

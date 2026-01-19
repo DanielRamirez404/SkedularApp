@@ -64,7 +64,7 @@ class DBHelper(context: Context) : SQLiteOpenHelper(
             CREATE TABLE ${Tables.SUBJECT}(
                 ${SubjectColumns.ID} INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
                 ${SubjectColumns.NAME} TEXT NOT NULL,
-                ${SubjectColumns.COLOR} TEXT NOT NULL
+                ${SubjectColumns.COLOR} TEXT
             );
         """.trimIndent())
 
@@ -88,6 +88,12 @@ class DBHelper(context: Context) : SQLiteOpenHelper(
             (${SettingsColumns.ID}, ${SettingsColumns.USERNAME}, ${SettingsColumns.THEME}) 
             VALUES(1, 'Daniel', 'system');
         """.trimIndent())
+
+        db.execSQL("INSERT INTO ${Tables.SUBJECT} (${SubjectColumns.NAME}) VALUES('Math')")
+        db.execSQL("INSERT INTO ${Tables.SUBJECT} (${SubjectColumns.NAME}) VALUES('Science')")
+        db.execSQL("INSERT INTO ${Tables.SUBJECT} (${SubjectColumns.NAME}) VALUES('History')")
+        db.execSQL("INSERT INTO ${Tables.SUBJECT} (${SubjectColumns.NAME}) VALUES('English')")
+        db.execSQL("INSERT INTO ${Tables.SUBJECT} (${SubjectColumns.NAME}) VALUES('Other')")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
